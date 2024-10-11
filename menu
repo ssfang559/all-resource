@@ -103,4 +103,9 @@ Form
 	
 	
 	ddSyncWithForm(form 'browse  'lib 'cell 'view) -- wake up the library browser
-	
+
+
+lisp 关于 macro 的 介绍
+https://cseweb.ucsd.edu/classes/fa02/cse150/lectures-pdf/lec6.pdf 
+https://lisp-journey.gitlab.io/blog/common-lisp-macros-by-example-tutorial/
+https://www.cnblogs.com/weidagang2046/archive/2012/06/03/tao_of_lisp.html
