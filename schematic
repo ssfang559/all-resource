@@ -1,0 +1,14 @@
+
+	1. geGetInstHier(window) --> return string of topCell/currentCell     "/C1"
+	2. geGetInstHierPath(window) --> return list((InstId row column orient) .. ) from top-> bottom
+	3. geGetInstMemList(window) --> return list((InstId iteral_numbers) .. ) from top-> bottom
+	
+	4. dbProduceMemName(netName )  --> list of expand netName
+		1. dbProduceMemName("A<2:0>,B,C<3:4>") => ("A<2>" "A<1>" "A<0>" "B" "C<3>" "C<4>")
+	5. geGetAdjustedPath(window pathList) --> 返回最短的path 路线
+	6. ddMapGetFileViewType(fileObjId) --> 返回viewType Name; 
+	7. 
+	8. dbGetAnyInstSwitchMaster(instId "viewName") --> cellViewId of matched viewName 
+	
+	9. geEnterAddNetProbe() --> highlight net
+	10. geEnterDeleteNetProbe() --> delete higfht net
