@@ -1,0 +1,106 @@
+Menu
+	a. hiCreateSimpleMenu(
+		handle
+		title
+		menuItems --> menu contents
+		menuCallbacks
+	) --> menuObj
+
+	menuObj -> hiMenuSym  can get the handle of menuObj
+	
+	a. hiCreateMenuItem(
+		?name handle
+		?itemText  title
+		?callback callback
+	)
+	
+	b. hiCreatePulldownMenu(
+		handle
+		title
+		menuItems
+	) --> menuObj
+	
+	c. separator = hiCreateSeparatorMenuItem(
+		?name "name"
+	)
+	
+	d. hiCreateSliderMenuItem(
+		?name handle
+		?itemText  sliderMenuTitle
+		?subMenu  subMenu -- which subMenu will put in this sliderMenu
+	)
+	
+	e. hiInsertBannerMenu( -- insert the pulldown menu to the window
+		windowId
+		menu
+		menuposition -- 0 is the leftmost position/ hiGetNumMenus(window)-- rightMost position
+	) 
+	
+	
+	f. deRegUserTriggers(
+		view
+		appTrigger
+		menuTrigger
+		postInstallTrigger -- when function define, it must have a args remain
+	)
+
+Form
+	a. hiCreateStringField(  
+		?name filedName
+		?prompt prompt
+		?defValue defValue
+		?callback 
+		?modifyCallback
+		?focusInCallback
+		?editable
+	) --> formHandle
+	
+	b. hiCreateCyclicField(
+		?name  fieldName
+		?prompt  "prompt"
+		?choices list("A" "B")
+		?defValue  
+		?callback
+	) -->handle
+	
+	c. hiCreateRadioField(
+		?name 
+		?prompt
+		?choices  list(
+				list('handle  "prompt")
+				…
+			)
+		?defValue
+		?callback
+	
+	)
+	
+	d. hiCreateToggleField( -->复选
+		?name
+		?prompt
+		?choices
+		?defValue
+		?callback
+	)
+
+	a. hiCreateAppForm(
+		?name name
+		?formTitle  title
+		?fields fieldEntries
+		?attachmentList list(
+			hicLeftPositionSet|hicTopPositionSet|…
+			….
+		) -- set anchor position change or not change, should combine with 2D fieldEntried and initialSize to get work
+		?initialSize  list(300 500)
+		
+		?buttomLayout list(
+			'Empty/'OKCancel/…
+			list('A  "callback1")
+			list('B  "callback2")
+		)
+		?callback  -- can use form~>fieldName(not handle)~>value to get the field Value
+	)
+	
+	
+	ddSyncWithForm(form 'browse  'lib 'cell 'view) -- wake up the library browser
+	
