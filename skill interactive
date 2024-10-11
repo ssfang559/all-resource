@@ -112,7 +112,39 @@ Shapes & Inst query/replace
 	e. leSearchHierarchy(cv bBox hier "type" param) --> 类似于dbShapeQuery
 	f. leReplace(cv obj_list replaceValue_list) --> 根据cellview 里面的obj，分别替换目标的属性信息
 	g. leReplaceAntInstMaster(instId lib cell view)  --> 替换目标inst的lib/ cell/ view 信息
-	
+
+	壹. libName
+	贰. cellName--> 字符串类型的cell名字
+	叁. cellViewType --> "maskLayout"
+	肆. viewName  --> "layout"
+	伍. instanceMaster --> cell中包含的inst cellViewID
+	陆. Instances --> cell 中包含的inst ID ~>master : inst cellView
+	柒. objType --> 类型 
+	捌. layerPurposePairs -->获取layer/purpose信息 
+	玖. Shapes --> 
+	壹拾. Nets -->
+	壹拾壹. Terminals --> 
+	壹拾贰. Transform--> 坐标/角度/magnify
+	壹拾叁. bBox 
+
+
+library copy & rename
+
+	® 增
+		a. gdmCreateSpec(lib cell viewType viewName " CDBA") --> 创建一个gdmspec 对象
+		b. gdmCreateSpecList() --> 创建一个GdmSpecList 
+		c. gdmAddSpceToSpecList(id list) 
+		
+	® 删
+	® 改
+		a. ccpCopy (srcSpecList destSpecList  t/nil  'CCP_EXPAND_COMANAGED nil nil "" "CDBA"  'CCP_UPDATE_DESTLIB_ONLY ) --> copy cell
+		b. ccpRename()
+		
+	® 查
+		a. ccpExpandDesign(specId 'CCP_EXPAND_COMANAGED skipSpecList() ) --> 返回一个包含spec cell 子cell的specList； 接下来用NextFrom; InspectSpec 去获取每一个cell 及cell文件信息
+		b. gdmResetSpecList(specList) --> 为gdmNextFromSpecList(specList) 准备
+		c. gdmNextFromSpecList(specList) --> 返回一个gdmSpecId 
+		d. gdmInspectSpec(gdmSpecId "CDBA") --> 返回一个(lib cell viewName fileName ) list
 
 
 
