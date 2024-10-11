@@ -1,0 +1,279 @@
+https://bbs.eetop.cn/thread-462078-1-1.html
+https://support.cadence.com/apex/Coveo_CommunitySearch#t=SkillInformation&language=en&pageName=Scripts
+
+skill语法
+	1. String
+		a. 组合
+			i. Concat string with list 类似与join
+				1) Bulidstring( '("a" "b") "/") -->"a/b"
+			ii. Concat string with more string
+				1) Strcat("l" "a" "b") --> "lab"
+				2) Strncat("ab" "cd" 1)-->只能在ab后面插入一个
+		b. 比较
+			i. Alphalessp 常和sort一起使用，结果按照顺序paixu
+				1) Sort( '("b" "a" "c" ) 'alphalessp) --> a b c 
+			ii. Strcmp 比较 字母按照ascii 大小 a < b -->1
+				1) 1（1 > 2）
+				2) 0
+				3) -1 (1 < 2)
+			iii. alphaNumcmp (按字母数字大小比较) 
+				1) alphaNumCmp("a " "b") --> -1
+			iv. Strncmp(a b n) 按个数比较
+		c. 获取长度
+			i. Strlen("aaa") --> 3
+		d. 索引 (起始值为1) 返回一个symbol
+			i. Getchar("abc" 2) --> b
+			ii. 
+			iii. Index("assad" "s") --> "ssad" 第一个匹配到的到最后
+			iv. Rindex("asdacas" "a") --> "as" 返回最后一个匹配到的字符到最后
+			v. Nindex("abc" "b") -->2 
+		e. 字符串截取
+			i. Substring("abcde" 2 4)-->"bcde" 从2开始往后数四个
+		f. 字符串-->类似列表 split
+			i. Parsestring("a b c d")-->("a" "b" "c" "d" )
+			ii. Parsestring("asdsa" "s") --> ("a" "d" "a")
+		g. 列表-> 字符串
+			i. buildString(list "/") --> use "/" to concat list to a string
+		h. 大小写转换
+			i. Uppercase("hello") --> HELLO
+			ii. Lowercase("HELLO")--> hello
+	
+	
+	2. 打印
+		a. Print-->不换行
+		b. Println-->换行
+		c. Printf-->格式化输出
+			i. %-m.nf
+				1) -代表左对齐
+	
+	3. 列表
+				
+		a. 列表的创建 
+			i. Lista = '(1 2 3 "aa")-->记得加上'
+			ii. Listb = list(1 2 3)
+			iii. List  = list(1  2)   Lisb_new = con3 list)-->(3 1 2)
+				
+		b. 增删改查
+			i. 增
+				1) c= append(list list(2 3))-->(1 2 2 4) --> 类似于两个列表 --的结合生成新的列表
+				2) c=append1(list "xx") -->真正的append 参数二列表和单字符都可以
+				3) 前加
+					a) Cons(a list) -->参数二必须是列表，实现列表的前加 并 merge
+					b) Xcons(list a) -> 语法不一样，实现效果和cons 类似，把元素 插入并merge
+					c) Ncons(list)==cons(list nil) 简单理解为直接加个括号;; 构建列表用
+						i) ncons('a) -> (a);; == cons('a nil)
+				4) 后加
+					a) Nconc(lista listb listc) 将b c append到a的后面，并merge ;; destructive 操作，
+					b) Tconc(list x) 生成一个二元的list，第一个元素等同于nconc， 第二个元素为x
+					c) Lconc(list list(1)) 可以理解为tconc的追加功能；首先需要一个由tconc创建的list，然后在将1追加到tconc的第一个list后面; 类似于tconc的list 版本
+				
+			ii. 删
+				1) Remove(item list)直接删除元素
+				2) Remq(item list) == if equal and then remove
+				3) Remd(item list) 同remove(item list)   destructive 操作，
+				4) Remdq(item list)破坏性删除，不可恢复    destructive 操作，
+			
+			iii. 改
+				1) Reverse(list) --> only reverse top-level;; non-destructive
+				2) Rplaca(alist 4)将alist中的第一个元素替换成4，原list 破坏, destructive 操作，但是内存地址不变
+				3) Rplacd(alist (a b))将alist的首位元素后面的元素全部去掉，跟上a b； destructive 操作
+				4) Setf 替换列表中的值 setf((car x)   42)； destructive 操作
+				5) Subst(x y list) 以x替换list中的所有y，返回新的list，但是不会删除原来的list
+				6) Sort(list 规则)
+					a) 规则可以有'lessp  'alphalessp 只会整理嵌套列表的首元素;; top-level
+					b) sortcar(list rule)
+				
+			iv. 查    list = (1 2 3)
+				1) Car(list)--->list(0)
+				2) Cdr(list)-->list[1:end]
+				3) Last(list)
+				4) Nth(index list)-->返回索引为index的元素-->0开始
+				5) nthcdr(index list) --> (element) list 对象
+				6) Lindex(list x)返回元素x在其中的索引
+				7) Length(list)-->length
+				8) 插曲
+					a) 对于二元的列表-->坐标  写法也可以list = 1: 2
+					b) xCoord(list)-->x
+					c) yCoord(list)-->y
+					d) List = (1:2 2:3)-->((1 2) (2 3))
+				9) 连续查询cadadr-->car(cdr(car(cdr(list))))
+				10) Nthelem(1 list)返回list的第一个元素
+				11) Nthcdr(n list)返回第n+1个元素
+				12) Member(3 list)查找3在list中么，如果在返回3和3后面的所有元素
+		
+		c. 遍历+筛选
+			i. 去重  --> artUnique(list)
+			ii. Setof
+				a) Setof (x list(1 2 3 4) (x>2) )-->返回一个list，条件为满足后面的要求
+					a) 类似于先执行了foreach，然后再判断，筛选
+			iii. setofs
+				a) 比setof更加高级，setof(x list(x x+1 x+2)  (x>2))-->同样返回list，但是会先计算list的值，然后再带入筛选
+			iv. 
+		d. 窥视;; 返回 t or  nil
+			i. Exists(x list 判断条件)如果第一个满足条件，那么将后面的直接输出 
+			ii. Forall(x list func) 如果list的每一个元素都满足func，那么输出t, else输出nil
+		
+		e. map函数  func list;;  单独使用和foreach两种
+			i. map(func list) -->use cdr() to step down the args list 每次迭代一个list;; 返回还是为输入的第一个list；
+				a) foreach(map listCell list()  ;
+					listCell => list()/cdr(list() )/cdr(list() )/..
+				) =>original or desctructive list()
+			ii. Mapc(func list1 list2 list3 ) 带入参数并执行func，use foreach;; 返回还是为输入的第一个list；返回值不变
+				a) foreach(mapc listCell list()
+					listCell => elem1/elem2/..
+				) =>original or desctructive list()
+			iii. Mapcar(func 可迭代变量)类似于python的map 函数;;  返回改变之后的list
+				a) foreach(mapcar x list()
+					listCell => elem1/elem2/..
+				 ); =>list(circle1_result circle2_result …)
+			iv. Maplist(func list) ->list 首先对list执行func, then cdr list 继续执行func，然后继续迭代删减
+				a) foreach(maplist listCell list()
+					listCell => list()/cdr(list() )/cdr(list() )/..
+				) =>list(circle1_result circle2_result …)
+			v. Mapcon(同maplist) 先取出整体的list，带入func，然后cdr迭代
+				a) foreach(maplist listCell list()
+					listCell => list()/cdr(list() )/cdr(list() )/..
+					->need a list to get the return value; no list, no return
+				) =>list(circle1_result circle2_result …)
+			vi. Mapcan(func, list list list) merge 后面输入的two list，合并成一个。要求后面的输入list具有相同的长度
+				a) foreach(maplist listCell list()
+					listCell => list()/cdr(list() )/cdr(list() )/..
+					->need a list to get the return value; no list, no return
+				) =>list(circle1_result circle2_result …)
+				
+		
+	4. Association list
+		a. 创建
+			i. AsscoList = '(("A" 1) ("B" 2) ("C" 3))
+		b. 检索
+			i. Assoc("B" asscolist)-->("B" 2) ;; 对于list里面的每一个元素，如果car(elem) == key, 那么返回该elem
+			ii. -->nil
+		c. 替换其中的值
+			i. Rplaca(cdr(assoc("B" assoclist)) "two")
+		
+	5. Arrays
+		a. Define array--> declare(array[n])
+		b. 赋值
+			i. For (each_item 0 n
+				Array[each_item] = x
+				1) )
+	6. 字典
+		a. 创建 maketable
+			i. Table = maketable("atable1" 0)
+		b. Tablep(table)-->判断table是否是table
+		c. Length(table)-->长度
+		d. Mytable['?]   获取table的所有键
+		e. 字典转换成列表
+			i. tableTolist(table)-->((键/值) () ())
+		f. 将字典写入到文件
+			i. Writetable("file" table)--> t
+		g. 读取文件到字典中
+			i. Readtable("file " table)-->t
+		h. 字典的简单打印
+			Printstruct(table)
+		i. 键的去除
+			i. Remove(key table)
+		j. 字典的遍历
+			i. Foreach(key table
+				1) Println(
+					a) List (Key table(key))
+					b) )
+			ii. )
+			
+				
+	7. I/O
+		a. Input
+			i. Inf = infile("path+file")
+			ii. When(inf
+				While(gets(each_line inf)
+					Println(each_line)-->读取
+				)
+				Close(inf)
+			)
+				While( fscanf( inf  "%s" each_line ) 
+						Println(each_line)
+					)
+		b. Output --> print/println/fprintf
+			i. F = outfile("path+file")
+			ii. For( I 1 2 
+				Println(I f) -->将i写入到f
+			)
+			Close(f)
+			iii. Fprintf(f "xx %d" i)-->先写f 后写内容
+	8. I/O++
+		a. Setskillpath("a " "b" "c") 当你给出一个相对路径的时候，系统会去 skillpath 里面找
+		b. Getskillpath()
+		c. getInstallpath()-->获取安装路径
+		d. Prependinstallpath()-->追加文件夹到安装路径
+		e. 检查file
+			i. Isfilename() -->t/nil 检查存在与否
+			ii. Isfile()
+		f. isDir() 目录
+		g. Isreadable()/ iswritable()/ isexcutable()
+		h. Filelength()-->以bytes类型返回文件的大小
+		i. Numopenfiles()-->已打开的文件数和可打开的文件数的list
+		j. 指针与移动
+			i. Filetell()-->返回指针的位置
+			ii. Fileseek(port n/-n  0/1/2)向前或向后在指定的起点开始移动
+		k. 目录创建
+			i. Createdir("path+foldername")
+			ii. createeDirhier() -->多级目录创建
+		l. 删除目录
+			i. Deletedir()
+		m. 删除文件
+			i. Deletefile()
+			
+		n. 获取所有文件和目录
+			i. getDirfiles
+		o. 扩展文件-->绝对路径文件
+			i. Simplifyfilename("file")
+		p. Getworkingdir()
+		q. Changeworkingdir()
+	9. Port 读写的口
+		a. Infile() 判断文件是否存在且可读
+			i. Gets(s port)读取一行放到变量s中
+			ii. Readline(port)一次一行读取
+			iii. Fscanf(port "%s " a)
+			iv. Getc(port)读取单个的字符
+		b. Outfile()
+			i. Fpintf(port "xxxx")
+			ii. Errport "aaaa" 当出现error 时输出后面的"aaa"
+			iii. Woport "aaa" 类似warning，然后输出后面的信息
+	
+			
+	10. 正则匹配
+		a. 常规的正则匹配，匹配list，替换，(只要在其中匹配到目标格式就行)
+	
+		a. Rexmatchp(".*"  "asdasd")
+		b. Pcrematchp("[0-9]*[.][0-9]*" "100.01")-->t (判断行或不行)
+		c. Rexcompile("^[a-zA-Z][a-z0-9]*") 编译
+		d. RexExecute('aaaa12)-->执行前面一句编译的结果做匹配
+		e. rexReplace("origin" "替换内容" 次数)
+		f. rexSubstitude("\\0 \\1") 将匹配到的内容重新包装，\\0对应原长度\\1为第一个括号
+		g. …
+	
+	11. Destruct ??
+	12. 控制流
+		a. Cond();cond
+		b. While()
+		c. For()
+		d. Prog() 类似于let，但是在其中可以使用return 中断并得到返回值
+		e. Let()区别于prog()，为let( (x 1) (y 2) 函数体)参数都为局部变量，取最后一行作为
+		f. Define((xx x) 函数体) 类似于lambda函数，将函数体取值赋给xx
+	13. 输出
+		a. Println
+		b. Print("") newline() print(""), newline()类似\n
+		c. Printlev(list 层数 个数, port) 限制输出list的层数和个数， 如果port存在则输出到port
+		d. Printf
+		e. Fprinf 将输出到port fprintf(p "asad")结果会输出到port中
+		Sprintf(s "sadasdsa") 将输出赋值给变量s
+		f. Pp function--> 将函数美化并输出
+		g. Pprint 美化数列然后输出
+	14. 输入
+		a. Evalstring("1 + 2")-->3
+		b. Evalstring("cons('a '(b c))") --> (a b c)
+		c. Loadstring("1 + 2") 执行字符串里面的内容，如果正确，则返回t
+		d. Errsetstring("a+ 1") 执行里面的内容，类似evalstring，但是如果执行错误，则输出error信息
+		e. Load
+		f. Loadi(".il")加载内容，如果遇到错误，则输出错误，然后继续执行
+		g. Linereadstring("sdadas \n sdad")只会输出\n前面的
