@@ -1,0 +1,146 @@
+winId = hiGetCurrentWindow()
+cvId = geGetEditRep(winId)
+libname  = cvId~>libName
+cellname = cvId~>cellName
+
+窗口
+	a. hiGetWindowList()--> 返回所有的window list 
+	b. hiGetCurrentWindow()--> 返回当前window ID
+	c. geOpen((?window hiGetCurrentWindow() ?lib "demo01" ?cell "aa" ?view "layout" ?viewType "maskLayout" ?mode "a") --> 根据一个lib/cell 打开一个窗口
+	d. hiGetAppType(window(1)) --> 返回window(1)的类型(layout/CIW/schematic)
+	e. hiGetWidowName(window(1)) --> 返回窗口名字
+	f. hiSetWindwowName(window(1) "TITLE") --> 设置title名字
+	g. hiRaiseWindow(window(1)) --> 将窗口置于TOP
+	h. hiResizeWindow(window(1) list(300:50 500:600)) --> 重新设置窗口大小
+	i. hiGetMaxScreenCoords() --> 返回窗口最大的坐标
+	j. hiGetAbsWindowScreenBBox(window(1) t)--> 以包含manager bar在内的最大window,返回左下右上坐标
+	k. hiIconifyWindow(window(17)) --> 最小化
+	l. hiGetWindowIconifyState(window(17)) --> 检查窗口是否已经最小化了
+	m. hideconifyWindow(window(17)) --> 最小化还原
+
+(dd: design data类型)
+	增
+	删
+	改
+	查
+		a. ddGetObj("")  --> 可以查libName/cellName ; 返回的是一个dd类型的对象
+		b. ddGetObjReadPath() --> 返回obj绝对路径
+
+Cellview
+	增
+		a. dbOpenCellViewByType("library" "cell name"  "layout" "maskLayout" "r") ---> cellview ID ;库/cell名/view name/view type/mode
+			i. 也可以创建新的cell
+		b. dbCreateRect(cv, (layer [purpose]) bBox)
+		c. dbCreateInst(cellView masterCellView name point orient number) --> 用masterID 创建
+		d. dbCreateParamInstByMasterName(cv libName cellName viewName name origin orient number) --> 用人为友好的方式创建
+	删
+	改
+		a. geTranformUserBBox(bBox lisst(dx:dy R0 mag )) -->对原来的bBox进行resize(先旋转或者映射，然后再dx/dy)
+		b. geTranformUserPoint(point (dx:dy R0)) -->先旋转或者映射，然后再dx/dy
+		c. dbSave(cv) -->保存
+		d. dbClose()
+		
+	查
+		a. cv-->geGetWindowCellView 返回当前window的cellview id (但是virtuoso不接受手动的输入)
+		b. geGetEditCellView(widnow(id)) -->返回正在编辑的cell view id
+		c. ~> ==  getSGq()  -->返回属性
+		d. ~> ? 返回属性名字列表
+		e. ~>?? 返回名字/值列表
+		f. dbFindAnyInstByName(cvID "I1") --> 该inst的dbid
+		g. dbFindNetByName(cvID "net") --> netID
+		h. Length(cvID~>nets) --> net的数量s
+		i. deGetViewType() -->查看当前view的类型
+		j. geGetSelSet() -->返回选中的obj ID
+		k. geSelectFig(arg)--> 返回选中figure的id
+	
+Skill
+	® 增
+		a. buildString(list "/") --> 类似于python的 join --> 返回一个字串
+		b. parseString(string "/") -->类似于python的split --> 返回一个列表
+	®  删
+	® 改
+		a. SetSkillPath(list) --> 设置skill 搜索路径
+		b. prePendInstallPath("tec/context") --> 返回一个拼接安装路径和new str的字串
+		c. Load(skill) --> 遇到报错就停止
+		d. Loadi(skil) --> 遇到报错不停止
+		e. simplifyFilename("~/skill") -->返回绝对路径
+	® 查
+		a. getSkillPath() --> 返回skill 搜索路径列表
+		b. getInstallPath() --> 安装路径
+		c. getDirFiles(绝对路径) --> 获取该路径下的文件列表
+		d. getShellEnvVar("SHELL") --> 获取unix的变量值
+		e. rexMatchList("rex" list) --> 满足正则匹配组成的列表
+		
+	a. Let 定义的参数为局部变量
+	b. Prog((args) ) -->与let相似，但是可以提前使用return 返回获取返回值
+	c. Foreach(mapcar x '(1 2 3 4) x**2) -->返回一个新的列表，先将列表中的元素取出，然后重新计算，返回
+	d. mapcar('func 'list) -->单输入变量函数+列表，逐个取出列表元素，然后带入到函数中
+	e. Setof(x '(1 2 3 4) expr ) --> 过滤器，逐个带入，满足条件输出
+	
+lO
+	a. Outfile("xxx.txt") --> wf port
+		a. Print/println(content port)
+		b. Fprintf(port content)
+	b. Infile("xxx.txt") --> rfport
+		a. Gets(nextline inport) -->读取一行
+
+TechFile
+	a. techFile = techGetTechFile(ddGetObj("TECHLIB"))
+	b. constraintGroupId = cstFindConstraintGroupIn(techFile "virtuosoDefaultSetup")
+	c. myViaOptions = viaGetViaOptions(constraintGroupId)
+	d. transitionList = viaFindTransitions(myViaOptions~>constraintGroupSetup "M1" "M0C"）
+
+Interactive
+
+	实现calibre  runset联动: 
+		a. loadi(strcat(getShellEnvVar("CALIBRE_HOME") "/lib/calibre.skl")) 在virtuoso中嵌入calibre
+		b. 需要在virtuoso CIW 窗口中设置环境变量MGC_CALIBRE_DRC_RUNSET_FILE=
+		c. setShellEnvVar("MGC_CALIBRE_DRC_RUNSET_FILE=/home/cad1/zhongqz/ver_for_10G4_TEG/drcRunset")
+		
+	useful variable:
+		a. leGloabelVariables->    (不是~>) cx自定义的变量
+		b. streamOutKeys -> layerTable 控制strmOut的时候的layer.map
+		c. envIsVal("layout" "viaParamCalcMode") -->判断value是不是variable
+		d. envGetVal("layout" "variable") -->获取变量值
+		e. envGetDefVal("layout" "variable") -->默认值
+		
+Shapes & Inst query/replace
+	a. dbGetHierPathTransfrom(dbInstId) --> 根据dbGetTrueOverlaps() 返回的dbId list 获取 patten的 transform 信息  (坐标 “R0” 1) 坐标是cell相对于top的坐标
+	b. dbShapeQuery(cv lpp bBox 0 32) --> 返回给定lpp的shape的（cellId1 cellId2 .. objId），可以用last(list) 获取objId
+	c. dbGetOverlaps(cv bBox lpp 32) -->类似于dbShapeQuery当时返回的结构不一样 (cellId1 (cellId2 (cellId3 objId)))
+	d. dbCopyFig(objId cv transform) --> copy obj 根据对应的transform 信息
+	e. leSearchHierarchy(cv bBox hier "type" param) --> 类似于dbShapeQuery
+	f. leReplace(cv obj_list replaceValue_list) --> 根据cellview 里面的obj，分别替换目标的属性信息
+	g. leReplaceAntInstMaster(instId lib cell view)  --> 替换目标inst的lib/ cell/ view 信息
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
