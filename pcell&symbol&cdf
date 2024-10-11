@@ -1,0 +1,170 @@
+ -simrc load sequences
+	a. $SIMRC/.simrc
+	b. $ossSimUserSiDir/.simrc
+	c. dfII/local/.simrc
+	d. Current UNIX directory/.simrc
+	d. ~/.simrc
+
+CDF
+	1. SotreDefault == "yes" ; when the pcell default value updated, those pcell set storeDefault == 'yes' will do not update default
+	2. Don't save == "yse" ; those parameter can not change, although you can modify it.
+	3. In Display condition; artParameterInToolDisply('w) --> when the w exist in simulator's instParameters then t else nil
+	4. Simulator
+		a. All non-alphanumber character should be preceded by blackslash↘
+		b. Terminal order 
+		c. Terminal order mapping --> is a disembodied list, first entry should be nil, and use : to separate, ex. (nil D ↘:d G ↘:g) 
+			i. G is the analog, lower case is for simulator use, Spectre
+		d. propMapping --> nil simParam CDFParam mapping simulator parameter with CDF (nil w W l L) 
+		e. modelName --> is used only by the analog-microwave version of CDL. 
+		f. permuteRule --> set which pin can switch, only auLvs
+		g. namePrefix --> prefix name for instance in the netlist, not used in spectre
+	5. formInitProc-->initial the form when you call a instance or Q to get the property, the initial procedure call == cdfDataId
+	6. doneProc --> call procedure after you click apply or place instance. == cellId<->cdfgData ;; cdfgData = cdfGetInstCDF(cellId)
+	7. when set progn(bn) in auCdl simu, then the SUB terminal will not print out
+	8. pPar()  == [+name];; iPar() == [~name];; atPar() == [@name];; dotPar() == [.name]
+	
+	9. cdfGetInstCDF(inst) ;; 返回inst 的effective cdf id
+	10. cdfGetCellCDF(inst~>master~>cell);; 返回submaster 的effective cdf id
+
+
+
+netlistProcedure 
+	Cdl --> analog design env. L uesr guide; auCdl netlisting chater
+		a. ansCdlPrintInst()
+		b. ansCdlSubcktCall
+			i. prefix 'X' in instance name;  
+			ii. change the terminal order,(use auCdlCDFPinCntrl to change the order back); 
+				□ auCdlCDFPinCntrl is set in the .simrc
+			iii. cell name insert with "/" 
+			iv. and soon
+			v. …
+			
+		c. ansCdlCompPrim --> suit  FET, CAP, IND, DIODE, BJT, RES, and MOS
+			i. all instParams
+		d. ansCdlCompParamPrim
+			i. all instParams
+			ii. dollorParams
+			iii. DOTMODEL property
+		e. ansCdlSpecParamPrim
+			i. all instParams
+			ii. dollorParams
+			iii. DOTMODEL property
+			iv. component name
+		f. 
+		g. ansCdlSubcktCallExtended
+		h. ansCdlHnlPrintInst --> user define netlist order and content
+			i. auCdlInstPrintOrder --> user define the netlist order
+			ii. …
+		
+	HSpice
+		a. ansSpiceDevPrim()
+		
+	Spectre
+		a. for spetre, if you do not define the printProcedure, the cadence will choose a default.
+		b. ansSpectreDevPrim()
+
+
+.simrc
+	Cdl --> analog design env. L uesr guide 
+		a. separate netlist
+			i. cdlPrintIndividualSubckt = t --> generate separate cds0/1 in ihnl folder with split netlist when there is a hierarchy netlist
+			ii. cdlSubcktsDir = <name> --> create a <name> folder to place the separate netlist
+		b. auCdlPrintModelEquals = 't --> when use ansCdlSubcktCallExtended(); print "model = model name"
+		c. auCdlPrintDollarParamsInEnd = nil set dollor params not in end
+		d. auCdlHnlInstModelPropName = 'devModelExample --> replace the model name with the devModelExample property value
+		e. 
+		f. auCdlDisableBlkBox=`nil --> enable treate the cell with auCdlPrintBlkBox = 't property as a black bBox when netlist
+		g. simCheckNetCollisionAction -> set collision notice when there are name collided
+		h. hnlInhConnUseDefSigName--> 使inherited port name 使用真实的portname 而不是带inherited字眼的名字  ;;<Open simulation System Reference>
+
+Pcell--pcd
+	a. Build.ils
+		a. Load(original ils) --> 原始文件，先是创建一个继承了pcell的类，里面有cdf/parameter/drawmethod三个函数，形成整个pcell核心。
+		b. 调用instance，放在什么库，什么名字
+		c. 创建pcell，以什么文件创建
+
+PCD
+	a. 可以用skill代码段处理一定的数据，返回变量即可，类似于let操作
+	b. Align 中source shape 打开的话，为移动source， 移动的距离为from shape 到target shape的距离
+
+libInit.il
+	a. libID = ddGetObj("TECHLIB")
+	b. Load callback_function
+	c. Load display.drf
+	d. Set via default no use calculation
+	e. Valid functions
+		○ isFile("") ->
+		○ ddGetObj("lib" nil  nil "file")
+		○ Errset(动作 nil) -->如果成功执行则t，否则为nil
+		○ ddGetObjReadPath(ddid) -->返回ddid对象的真实路径
+		○ ddisId() -->判断ddId是否存在
+		○ getDirFiles(path) -->返回路径下的所有文件
+	f. 
+
+Callback()
+	1. viaUnregisterCreateViaInitCallback()
+			 postViaEngineCallback()
+			 preViaEngineCallback()
+	2. viaRegisterCreateViaInitialCallback("func")
+	3. hiGetCurrentForm()-->   返回上一个出现的form 对象(类型等)
+	4. hiIsFormDisplayed(form对象) --> 该对象当前是否正在展示
+	5. hiRegTimer("func" 1/10s * n)-->该函数在n*/10s后执行，延迟
+	6. geRefresh() -->重画所有画面，
+	7. cdfUpdateCustomViaParam(viaID)-->根据CDF里面的参数 存储(更新)custom Via 
+	8. viaId~> viaHeader
+	
+Global Variable record
+	1. Le0ViaForm -->via打开时的form 总变量
+	2. Le0ViaForm->globalCutClassAuto->value
+	3. form~>viaSingleModeScrollView~>viaDefName
+	4. form~>viaSingleModeScrollView~>parameters~>page_System~>获取或更改via form的值
+	5. form~>viaSingleModeScrollView~>parameters~>page_System~>layer1EncRight~>value =viaEncSlot->layer1XEnclosure
+	6. form~>viaSingleModeScrollView~>parameters~>page_User_defined~>viaUserParamScrollView~>UseRuleLay1~>value
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.
